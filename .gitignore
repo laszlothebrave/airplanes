@@ -1,3 +1,21 @@
+Skip to content
+ 
+Search or jump to�
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@laszlothebrave 
+0
+0 0 laszlothebrave/airplanes
+ Code  Issues 0  Pull requests 0  Projects 0  Wiki  Insights  Settings
+airplanes/.gitignore
+@laszlothebrave laszlothebrave Initial commit
+55d8f61 3 hours ago
+105 lines (84 sloc)  1.17 KB
+    
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -102,3 +120,18 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+� 2019 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+
+# pycharm
+.idea

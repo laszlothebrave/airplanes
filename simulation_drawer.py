@@ -10,6 +10,10 @@ import numpy as np
 from piece import Piece
 from surface import Surface
 
+import numpy as np
+from airplane import Airplane
+from simulation import Simulation
+
 vertices=(
     (10000,-1,10000),
     (10000,-1,-10000),
@@ -67,102 +71,117 @@ class myThread (threading.Thread):
        root.geometry("400x300")
        app = Window(root)
        root.mainloop()
+       
+   
 
 
-def main():
-    surface = Surface()
-    pygame.init()
-    display = (800,600)
-    pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
+surface = Surface()
 
-    tx = 0
-    ty = 0
-    tz = 0
-    ry = 0
-    rz = 0
+plane = Airplane(100000, 100, 10)
+airplane = plane
+plane.position = np.array((500., 500., 10000.))
+plane.velocity = np.array((150., 100., -10.))
+sim = Simulation(plane, surface)
 
-    glMatrixMode(GL_PROJECTION)
-    gluPerspective(45, (display[0] / display[1]), 0.1, 100000.0)
 
-    view_mat = IdentityMat44()
-    glMatrixMode(GL_MODELVIEW)
-    glLoadIdentity()
-    glTranslatef(0, -10000, -14000)
-    glGetFloatv(GL_MODELVIEW_MATRIX, view_mat)
-    glLoadIdentity()
-    glRotatef(100, 1, 1, 1)
+pygame.init()
+display = (800,600)
+pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
 
-    clock = pygame.time.Clock()
-    gui = myThread()
-    gui.start()
-    threads = []
-    threads.append(gui)
+tx = 0
+ty = 0
+tz = 0
+ry = 0
+rz = 0
 
-    airplane = Piece()
-    airplane.position = np.array((1000.,1000.,1000.))
+glMatrixMode(GL_PROJECTION)
+gluPerspective(45, (display[0] / display[1]), 0.1, 100000.0)
 
-    while True:
-        clock.tick(60)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+view_mat = IdentityMat44()
+glMatrixMode(GL_MODELVIEW)
+glLoadIdentity()
+glTranslatef(2000, 0, -14000)
+glGetFloatv(GL_MODELVIEW_MATRIX, view_mat)
+glLoadIdentity()
+glRotatef(100, 1, 1, 1)
+
+clock = pygame.time.Clock()
+gui = myThread()
+gui.start()
+threads = []
+threads.append(gui)
+
+while True:
+    clock.tick(60)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 quit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    quit()
-                if event.key == pygame.K_a:
-                    tx = 0.1
-                elif event.key == pygame.K_d:
-                    tx = -0.1
-                elif event.key == pygame.K_w:
-                    tz = 0.1
-                elif event.key == pygame.K_s:
-                    tz = -0.1
-                elif event.key == pygame.K_RIGHT:
-                    ry = 1.0
-                elif event.key == pygame.K_LEFT:
-                    ry = -1.0
-                elif event.key == pygame.K_DOWN:
-                    rz = 1.0
-                elif event.key == pygame.K_UP:
-                    rz = -1.0
-            elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_a and tx > 0:
-                    tx = 0
-                elif event.key == pygame.K_d and tx < 0:
-                    tx = 0
-                elif event.key == pygame.K_w and tz > 0:
-                    tz = 0
-                elif event.key == pygame.K_s and tz < 0:
-                    tz = 0
-                elif event.key == pygame.K_RIGHT and ry > 0:
-                    ry = 0.0
-                elif event.key == pygame.K_LEFT and ry < 0:
-                    ry = 0.0
-                elif event.key == pygame.K_UP and rz < 0:
-                    rz = 0.0
-                elif event.key == pygame.K_DOWN and rz > 0:
-                    rz = 0.0
-
-        glPushMatrix()
-        glLoadIdentity()
-        glTranslatef(tx*1000, ty*1000, tz*1000)
-        glRotatef(ry*1, 0, 1, 0)
-        glRotatef(rz*1, 1, 0, 0)
-
-        glMultMatrixf(view_mat)
-
-        glGetFloatv(GL_MODELVIEW_MATRIX, view_mat)
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        #Pyramid()
-        airplane.draw()
-        surface.print()
-        glPopMatrix()
-
-        pygame.display.flip()
-
-
-
-main()
+            if event.key == pygame.K_a:
+                tx = 0.1
+            elif event.key == pygame.K_d:
+                tx = -0.1
+            elif event.key == pygame.K_w:
+                tz = 0.1
+            elif event.key == pygame.K_s:
+                tz = -0.1
+            elif event.key == pygame.K_RIGHT:
+                ry = 1.0
+            elif event.key == pygame.K_LEFT:
+                ry = -1.0
+            elif event.key == pygame.K_DOWN:
+                rz = 1.0
+            elif event.key == pygame.K_UP:
+                rz = -1.0
+            elif event.key == pygame.K_EQUALS:
+                i = 0
+                while not sim.all_landed() and i < 250:
+                    sim.step(0.2)
+                    i += 1
+                    print(plane.position)
+            elif event.key == pygame.K_MINUS:
+                sim.step(0.2)
+                print(plane.position)
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_a and tx > 0:
+                tx = 0
+            elif event.key == pygame.K_d and tx < 0:
+                tx = 0
+            elif event.key == pygame.K_w and tz > 0:
+                tz = 0
+            elif event.key == pygame.K_s and tz < 0:
+                tz = 0
+            elif event.key == pygame.K_RIGHT and ry > 0:
+                ry = 0.0
+            elif event.key == pygame.K_LEFT and ry < 0:
+                ry = 0.0
+            elif event.key == pygame.K_UP and rz < 0:
+                rz = 0.0
+            elif event.key == pygame.K_DOWN and rz > 0:
+                rz = 0.0
+    
+    glPushMatrix()
+    glLoadIdentity()
+    glTranslatef(tx*1000, ty*1000, tz*1000)
+    glRotatef(ry*1, 0, 1, 0)
+    glRotatef(rz*1, 1, 0, 0)
+    
+    glMultMatrixf(view_mat)
+    
+    glGetFloatv(GL_MODELVIEW_MATRIX, view_mat)
+    
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    #Pyramid()
+    
+    for piece in sim.pieces:
+        piece.draw()
+    
+    airplane.draw()
+    surface.print()
+    glPopMatrix()
+    
+    pygame.display.flip() 

@@ -14,22 +14,25 @@ def clamp(min_v, x, max_v):
 
 class Piece:
     def __init__(self):
+        self.state = 0
         self.position = np.array((0, 0, 0), dtype = np.float64)
         self.mass = 0
         self.velocity = np.array((0, 0, 0), dtype = np.float64)
-        self.air_friction_factor = 0
+        self.air_friction_factor = 0.8
         self.springiness = 0
         self.ground_friction_factor = 0
         
     def explode(self, plane, max_mass, rnd_mu, rnd_sigma):
-        self.position = plane.position
-        self.velocity = plane.velocity + random.gauss(rnd_mu, rnd_sigma)
+        self.position = plane.position.copy()
+        self.velocity = plane.velocity.copy() + np.random.normal(rnd_mu, rnd_sigma,(3))
         self.mass = random.uniform(1, max_mass)
-        self.air_friction_factor = random.random()
+        self.air_friction_factor = random.uniform(0.2, 1)
         
     def step(self, forces_sum, dt):
-        self._update_velocity(forces_sum, dt)
-        self._update_position(dt)
+        #print("forces: ", forces_sum)
+        if self.state == 0:
+            self._update_velocity(forces_sum, dt)
+            self._update_position(dt)
 
     def draw(self):
         # tex = self.read_texture('sphere_image.jpg')
@@ -46,13 +49,16 @@ class Piece:
         # glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
         # glTranslatef(-2, 0, 0)
         # glutSolidSphere(1, 100, 20)
-
-
-        glColor3f(1, 0, 0)
+        glPushMatrix()
+        if self.state == 0:
+            glColor3f(1, clamp(0.,self.mass / 1000,1.), 0)
+        else:
+            glColor3f(1, 1, 1)
         qobj = gluNewQuadric()
         
         glTranslatef(self.position[0], self.position[2], self.position[1])
-        gluSphere(qobj, 50, 50, 50)
+        gluSphere(qobj, 20, 10, 10)
+        glPopMatrix()
 
     def read_texture(self, filename):
         img = Image.open(filename)
@@ -72,7 +78,7 @@ class Piece:
         return textID
     
     def _update_velocity(self, forces_sum, dt):
-        self.velocity += forces_sum * dt
+        self.velocity += forces_sum * dt / self.mass
 
     def _update_position(self, dt):
         self.position += self.velocity * dt

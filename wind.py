@@ -1,4 +1,5 @@
 from force import force
+import simulation
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -10,11 +11,11 @@ def y_from_pressure(pressure):
     return (pressure[2:, :] - pressure[:-2, :])[:, 1:-1]
 
 def generate_pressure():
-    return 1000 + np.random.exponential(5, size=(202,202))
+    return 1000 + np.random.exponential(5, size=(2200,2200))
 
 class WindForce(force):
     def __init__(self):
-        super().__init__([1])
+        super().__init__([simulation.State.air])
         self.pressure = generate_pressure()
         self.x_velocity = x_from_pressure(self.pressure)
         self.y_velocity = y_from_pressure(self.pressure)
@@ -38,7 +39,7 @@ class WindForce(force):
         wind_x = x_1 * center_weights[0] + x_2 * (1-center_weights[0]) #linear interpolation
         wind_y = y_1 * center_weights[1] + y_2 * (1-center_weights[1])
 
-        return (wind_x, wind_y, 0)
+        return np.array((wind_x, wind_y, 0))
 
 if __name__ == "__main__":
     a = WindForce()

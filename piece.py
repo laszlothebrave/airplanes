@@ -1,3 +1,4 @@
+import numpy as np
 from OpenGL.raw.GL.VERSION.GL_1_0 import glColor3f
 from OpenGL.raw.GLU import gluSphere
 from OpenGL.GLUT import *
@@ -7,12 +8,11 @@ import sys
 from PIL import Image as Image
 import numpy
 
-
-class Piece:
+class piece:
     def __init__(self):
-        self.position = (0, 0, 0)
+        self.position = np.array((0, 0, 0))
         self.mas = 0
-        self.velocity = (0, 0, 0)
+        self.velocity = np.array((0, 0, 0))
         self.air_friction_factor = 0
         self.springiness = 0
         self.ground_friction_factor = 0

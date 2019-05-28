@@ -1,5 +1,4 @@
 from force import force
-import simulation
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -15,7 +14,7 @@ def generate_pressure():
 
 class WindForce(force):
     def __init__(self):
-        super().__init__([simulation.State.air])
+        super().__init__([0])
         self.pressure = generate_pressure()
         self.x_velocity = x_from_pressure(self.pressure)
         self.y_velocity = y_from_pressure(self.pressure)

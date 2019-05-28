@@ -79,7 +79,7 @@ surface = Surface()
 
 plane = Airplane(100000, 100, 10)
 airplane = plane
-plane.position = np.array((500., 500., 10000.))
+plane.position = np.array((0., 0., 10000.))
 plane.velocity = np.array((150., 100., -10.))
 sim = Simulation(plane, surface)
 
@@ -100,7 +100,7 @@ gluPerspective(45, (display[0] / display[1]), 0.1, 100000.0)
 view_mat = IdentityMat44()
 glMatrixMode(GL_MODELVIEW)
 glLoadIdentity()
-glTranslatef(2000, 0, -14000)
+glTranslatef(0, -2000, -14000)
 glGetFloatv(GL_MODELVIEW_MATRIX, view_mat)
 glLoadIdentity()
 glRotatef(100, 1, 1, 1)

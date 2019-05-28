@@ -1,3 +1,10 @@
+from enum import Enum, auto
+
+class State(Enum):
+    initial = auto()
+    air = auto()
+    ground = auto()
+
 import numpy as np
 
 from airplane import Airplane
@@ -5,18 +12,13 @@ from piece import Piece
 from wind import WindForce
 from gravity import GravityForce
 
-from enum import Enum, auto
 
 import numba
 
-class State(Enum):
-    initial = auto()
-    air = auto()
-    ground = auto()
 
 class Simulation:
     def __init__(self, plane, surface):
-        self.state = State.air
+        self.state = 0
         self.plane = plane
         self.surface = surface
         self.forces = [WindForce(), GravityForce()]
@@ -48,7 +50,7 @@ class Simulation:
             piece.step(piece_forces, dt)
         
         #single state :D
-        self.state = State.air
+        self.state = 0
             
     @numba.jit()
     def all_landed(self):

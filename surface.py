@@ -16,7 +16,7 @@ class Surface:
         self.vertices = np.zeros((size, size))
         for x in range(size):
             for y in range(size):
-                self.vertices[x][y] = (x-8)*(x-8)*2+(y-11)*(y-11)*2 + randint(0, 500)
+                self.vertices[x][y] = (x-8)*(x-8)*2+(y-11)*(y-11)*2 #+ randint(0, 500)
 
     def print(self):
         glLineWidth(1)

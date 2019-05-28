@@ -40,6 +40,7 @@ class WindForce(force):
 
         return (wind_x, wind_y, 0)
 
-a = WindForce()
-zzz = a.get_wind(501,0,0)
-plt.contourf(a.pressure)
+if __name__ == "__main__":
+    a = WindForce()
+    zzz = a.get_wind(501,0,0)
+    plt.contourf(a.pressure)

@@ -5,6 +5,7 @@ from OpenGL.GLU import *
 from tkinter import *
 import threading
 import numpy
+import numpy as np
 
 from piece import Piece
 from surface import Surface
@@ -98,6 +99,7 @@ def main():
     threads.append(gui)
 
     airplane = Piece()
+    airplane.position = np.array((1000.,1000.,1000.))
 
     while True:
         clock.tick(60)

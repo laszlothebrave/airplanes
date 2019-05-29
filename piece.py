@@ -8,6 +8,7 @@ from OpenGL.GL import *
 import sys
 from PIL import Image as Image
 import numpy
+import numba
 
 def clamp(min_v, x, max_v):
     return min(max_v, max(x, min_v))
@@ -22,18 +23,20 @@ class Piece:
         self.springiness = 0
         self.ground_friction_factor = 0
         
+        
     def explode(self, plane, max_mass, rnd_mu, rnd_sigma):
         self.position = plane.position.copy()
         self.velocity = plane.velocity.copy() + np.random.normal(rnd_mu, rnd_sigma,(3))
         self.mass = random.uniform(1, max_mass)
         self.air_friction_factor = random.uniform(0.2, 1)
-        
+    
     def step(self, forces_sum, dt):
         #print("forces: ", forces_sum)
         if self.state == 0:
             self._update_velocity(forces_sum, dt)
             self._update_position(dt)
-
+            
+    @numba.jit()
     def draw(self):
         # tex = self.read_texture('sphere_image.jpg')
         # qobj = gluNewQuadric()
@@ -77,8 +80,10 @@ class Piece:
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
         return textID
     
+    @numba.jit()
     def _update_velocity(self, forces_sum, dt):
         self.velocity += forces_sum * dt / self.mass
-
+   
+    @numba.jit()
     def _update_position(self, dt):
         self.position += self.velocity * dt

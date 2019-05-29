@@ -50,7 +50,7 @@ class Simulation:
             piece.step(piece_forces, dt)
         
         #single state :D
-        self.state = 0
+        self.state = 0  
             
     @numba.jit()
     def all_landed(self):

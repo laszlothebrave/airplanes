@@ -67,20 +67,21 @@ class myThread (threading.Thread):
       threading.Thread.__init__(self)
 
    def run(self):
-       root = Tk()
-       root.geometry("400x300")
-       app = Window(root)
-       root.mainloop()
+       self.root = Tk()
+       self.root.geometry("400x300")
+       self.app = Window(self.root)
+       self.root.mainloop()
        
-   
-
+   def close(self):
+       self.root.quit()
+       self.app.quit()
 
 surface = Surface()
 
-plane = Airplane(100000, 100, 10)
+plane = Airplane(100000, 100, 15)
 airplane = plane
 plane.position = np.array((0., 0., 10000.))
-plane.velocity = np.array((150., 100., -10.))
+plane.velocity = np.array((150., 150., 2.))
 sim = Simulation(plane, surface)
 
 
@@ -115,10 +116,12 @@ while True:
     clock.tick(60)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            gui.close()
             pygame.quit()
             quit()
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
+                gui.close()
                 pygame.quit()
                 quit()
             if event.key == pygame.K_a:
@@ -163,8 +166,11 @@ while True:
                 rz = 0.0
             elif event.key == pygame.K_DOWN and rz > 0:
                 rz = 0.0
+            elif event.key == pygame.K_MINUS:
+                sim.step(0.2)
+                print(plane.position)
     
-    glPushMatrix()
+    #glPushMatrix()
     glLoadIdentity()
     glTranslatef(tx*1000, ty*1000, tz*1000)
     glRotatef(ry*1, 0, 1, 0)
@@ -182,6 +188,6 @@ while True:
     
     airplane.draw()
     surface.print()
-    glPopMatrix()
+    #glPopMatrix()
     
     pygame.display.flip() 

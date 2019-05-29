@@ -10,6 +10,7 @@ from OpenGL.GL import *
 import sys
 from PIL import Image as Image
 import numpy
+import numba
 
 class Airplane(Piece):
     def __init__(self, mass, pieces, tmax):
@@ -22,7 +23,7 @@ class Airplane(Piece):
         
         self.mass = mass
         self.pieces_left = pieces
-        
+      
     def step(self, forces_sum, dt):
         #generate pieces
         self.t += dt
@@ -40,7 +41,8 @@ class Airplane(Piece):
         glTranslatef(self.position[0], self.position[2], self.position[1])
         gluSphere(qobj, 40, 10, 10)
         glPopMatrix()
-    
+        
+    @numba.jit()
     def _new_pieces(self):
         new_pieces = []
         
@@ -50,7 +52,7 @@ class Airplane(Piece):
         
         for i in range(num):
             piece = Piece()
-            piece.explode(self, self.max_mass, 25, 25)
+            piece.explode(self, self.max_mass, 0, 25)
             self.mass -= piece.mass
             self.pieces_left -= 1
             new_pieces.append(piece)

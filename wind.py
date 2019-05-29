@@ -1,6 +1,6 @@
 from force import force
 import numpy as np
-
+import numba
 import matplotlib.pyplot as plt
 
 def x_from_pressure(pressure):
@@ -20,10 +20,12 @@ class WindForce(force):
         self.y_velocity = y_from_pressure(self.pressure)
 
     def calculate_force(self, piece):
-        return piece.air_friction_factor * (self.get_wind(*piece.position) - piece.velocity)
-        
+        v_d = (self.get_wind(*piece.position) - piece.velocity)
+        return piece.air_friction_factor * v_d 
+    
+    @numba.jit()
     def get_wind(self, x, y, z):        
-        indices = np.array((x/100 + 100, y/100 + 100, z/100 + 100))
+        indices = np.array((x/1000 + 1000, y/1000 + 1000, z/1000 + 1000))
         rounded = np.round(indices).astype(np.int)
         
         center_weights = 1 - np.abs(rounded - indices)
@@ -43,4 +45,4 @@ class WindForce(force):
 if __name__ == "__main__":
     a = WindForce()
     zzz = a.get_wind(501,0,0)
-    plt.contourf(a.pressure)
+    plt.contourf(a.pressure[:220,:220])
